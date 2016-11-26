@@ -1,0 +1,27 @@
+import matplotlib.pyplot as plt
+import os
+curPath=os.getcwd()
+dataPath = '/home/dash/Pictures/sensorData/2016_11_22/magneticData'
+print os.listdir(dataPath)
+
+def readFile(fileName):
+    f = open(dataPath+'/'+fileName)
+    lines = f.readlines()
+    for line in lines
+         print line,
+    f.close()
+def plotLine():
+    pass
+
+def main():
+        readFile('AB2.txt')
+	plt.figure(1)
+	plt.xlabel('xlable')
+	plt.ylabel('ylable')
+	plt.ylim(0, 15)
+	plt.title('line_regression')
+	#plt.legend()
+	#plt.show()
+
+if __name__ == '__main__':
+	main()
