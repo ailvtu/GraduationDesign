@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import os
 import numpy as np 
-from dtw import dtw
-from filters import LPF,HPF,meanF
+from dtw3 import dtw
+from filters import LPF,HPF,meanF,standard
 from readFiles import readFile
+from numpy.linalg import norm
 #curPath=os.getcwd()
 #magneticDataPath = '/home/dash/Pictures/sensorData/2016_11_23/magneticData'
 magneticDataPath = '/home/dash/Pictures/sensorData/2016_11_25/magneticData'
@@ -40,11 +41,11 @@ def plotLine2(a,b,label):
 		ax.plot(b,'k--',label="$raw-data$",linewidth=2)
 	else:
 		ax.plot(a,'r-',label="$rapid$",linewidth=2)
-		ax.plot(b,'k--',label="$normal$",linewidth=2)
-	plt.xlim(1, len(a))
-	plt.ylim(33,42)	
+		ax.plot(b,'b-',label="$normal$",linewidth=2)
+	#plt.xlim(1, len(a))
+	plt.ylim(30,42)	
 	plt.ylabel('intensity/uT')
-	plt.xlabel('distance')
+	plt.xlabel('simples')
 	plt.legend()
 	labels=['12','44','32','23']
 	#ax.set_xticks(np.linspace(0,1,9))  
@@ -55,16 +56,16 @@ def plotLine2(a,b,label):
 def plotLine3(x,y,z):
 	plt.figure(1)
 
-#	plt.plot(x[1:65],'r-*',label="$left$",linewidth=2)
-#	plt.plot(y[1:65],'g-o',label="$midle$",linewidth=2)
-#	plt.plot(z[1:65],'b-^',label="$right$",linewidth=2)
+	plt.plot(x,'r-',label="$left$",linewidth=2)
+	plt.plot(y,'g-',label="$midle$",linewidth=2)
+	plt.plot(z,'b-',label="$right$",linewidth=2)
 
-	plt.plot(x,'k--',label="$Meizu$",linewidth=1.5)
-	plt.plot(y,'m-',label="$Xiaomi$",linewidth=1.5)
-	plt.plot(z,'b--.',label="$Huawei$",linewidth=1.5)
-	#plt.xlabel('distance/dm')
+	#plt.plot(x,'k-',label="$Meizu$",linewidth=1.5)
+	#plt.plot(y,'m-',label="$Xiaomi$",linewidth=1.5)
+	#plt.plot(z,'b-',label="$Huawei$",linewidth=1.5)
+	plt.xlabel('simples')
 	plt.ylabel('intensity/uT')
-	plt.ylim(34,44)
+	#plt.ylim(34,44)
 	#plt.xlim(0, 65)		
 	#plt.title('gallery magnetic field')
 	plt.legend()
@@ -89,13 +90,13 @@ def plotLine4(x,y,z,p):
 	plt.title('magnetic of HG Path')
 	plt.ylabel('intensity/uT')
 	#plt.ylim(35, 42)
-
+	plt.xlabel('samples')
 	plt.subplot(224)
 	plt.plot(p,'k',linewidth=2)
 	plt.title('magnetic of CF Path')
 	plt.ylabel('intensity/uT')
 	#plt.ylim(35, 42)	
-	#lt.xlabel('xlable')
+	plt.xlabel('samples')
 	#lt.ylabel('ylable')
 	#plt.ylim(0, 15)	
 	#Plt.title('gallery magnetic field')
@@ -103,34 +104,46 @@ def plotLine4(x,y,z,p):
 #plot 3 line
 def plotLine4lines(x,y,z,d):
 	plt.figure(1)
-	plt.plot(x[1:len(x)],'r-*',label="$X$",linewidth=2)
-	plt.plot(y[1:len(y)],'g-o',label="$Y$",linewidth=2)
-	plt.plot(z[1:len(z)],'b-^',label="$Z$",linewidth=2)
-	plt.plot(d[1:len(d)],'m-x',label="$D$",linewidth=2)
-	#plt.xlabel('distance/dm')
+	plt.plot(x[1:len(x)],'r-',label="$CF1$",linewidth=2)
+	plt.plot(y[1:len(y)],'g-',label="$CF2$",linewidth=2)
+	plt.plot(z[1:len(z)],'b-',label="$CF3$",linewidth=2)
+	plt.plot(d[1:len(d)],'m-',label="$HG$",linewidth=2)
+	plt.xlabel('simples')
 	plt.ylabel('intensity/uT')
 	#plt.ylim(0, 15)
-	#plt.xlim(0, 60)		
+	plt.xlim(0,len(x))		
 	#plt.title('gallery magnetic field')
 	plt.legend()
 	plt.show()
 
-def plotNlines(dataList1,dataList2):
-	plt.subplot(211)
+def plotNlines(dataList1,dataList2,dataList3):
+
+	plt.subplot(311)
 	for data in dataList1:
 		plt.plot(data,linewidth=1.5)
-	plt.subplot(212)
+	plt.ylabel('intensity/uT')
+	plt.subplot(312)
 	for data2 in dataList2:
 		plt.plot(data2,linewidth=1.5)
+		plt.ylabel('difference')
+	plt.subplot(313)
+	for data3 in dataList3:
+		plt.plot(data3,linewidth=1.5)
+		plt.ylabel('difference')
+	plt.xlabel('simples')
 	plt.show()
 
 def plotFilterLines(x,y,z):
 	plt.subplot(311)
 	plt.plot(x,linewidth=1.6)
+	plt.ylabel('intensity/uT')
 	plt.subplot(312)
 	plt.plot(y,'m-',linewidth=1.6)
+	plt.ylabel('intensity/uT')
 	plt.subplot(313)
 	plt.plot(z,'r-',linewidth=1.6)
+	plt.xlabel('simples')
+	plt.ylabel('intensity/uT')
 	plt.show()
 def main():
 
@@ -153,15 +166,15 @@ def main():
     
 
 	CFlist=[]
-	CF01x,CF01y,CF01z,CF01xyz=readFile(magneticDataPath26,'CF01.txt');CFlist.append(CF01xyz);
-	CF02x,CF02y,CF02z,CF02xyz=readFile(magneticDataPath26,'CF02.txt');CFlist.append(CF02xyz);
-	CF03x,CF03y,CF03z,CF03xyz=readFile(magneticDataPath26,'CF03.txt');CFlist.append(CF03xyz);
-	CF04x,CF04y,CF04z,CF04xyz=readFile(magneticDataPath26,'CF04.txt');CFlist.append(CF04xyz);
-	CF05x,CF05y,CF05z,CF05xyz=readFile(magneticDataPath26,'CF05.txt');CFlist.append(CF05xyz);
-	CF06x,CF06y,CF06z,CF06xyz=readFile(magneticDataPath26,'CF06.txt');CFlist.append(CF06xyz);
+	#CF01x,CF01y,CF01z,CF01xyz=readFile(magneticDataPath26,'CF01.txt');CFlist.append(CF01xyz);
+	#CF02x,CF02y,CF02z,CF02xyz=readFile(magneticDataPath26,'CF02.txt');CFlist.append(CF02xyz);
+	#CF03x,CF03y,CF03z,CF03xyz=readFile(magneticDataPath26,'CF03.txt');CFlist.append(CF03xyz);
+	#CF04x,CF04y,CF04z,CF04xyz=readFile(magneticDataPath26,'CF04.txt');CFlist.append(CF04xyz);
+	#CF05x,CF05y,CF05z,CF05xyz=readFile(magneticDataPath26,'CF05.txt');CFlist.append(CF05xyz);
+	#CF06x,CF06y,CF06z,CF06xyz=readFile(magneticDataPath26,'CF06.txt');CFlist.append(CF06xyz);
 	CF07x,CF07y,CF07z,CF07xyz=readFile(magneticDataPath26,'CF07.txt');CFlist.append(CF07xyz);
-	CF08x,CF08y,CF08z,CF08xyz=readFile(magneticDataPath26,'CF08.txt');CFlist.append(CF08xyz);
-	CF09x,CF09y,CF09z,CF09xyz=readFile(magneticDataPath26,'CF09.txt');CFlist.append(CF09xyz);
+	#CF08x,CF08y,CF08z,CF08xyz=readFile(magneticDataPath26,'CF08.txt');CFlist.append(CF08xyz);
+	#CF09x,CF09y,CF09z,CF09xyz=readFile(magneticDataPath26,'CF09.txt');CFlist.append(CF09xyz);
 	CF10x,CF10y,CF10z,CF10xyz=readFile(magneticDataPath26,'CF10.txt');CFlist.append(CF10xyz);
 
 
@@ -181,7 +194,7 @@ def main():
 	mBH1=meanF(BH1xyz,win)
 	mBH2=meanF(BH2xyz,win)
 	mBH3=meanF(BH3xyz,win)
-	BHf1=LPF(mBH1)
+	BHf1=LPF(mBH1) 
 	BHf2=LPF(mBH2)
 	BHf3=LPF(mBH3)
 
@@ -201,18 +214,20 @@ def main():
 	mGH=meanF(GHxyz,win)
 	GHf=LPF(mGH)
 	GHf.reverse()
-    #plotLine2(GHf,HGf,'direction')#plot the TWO direction
+	plotLine2(GHf,HGf,'direction')#plot the TWO direction
     #plotLine2(GHf,HGf,'HPF')#plot the HPFd raw data
 ###################
 	mBC2=meanF(BC2xyz,win)
 	BC2f=LPF(mBC2)
-	#plotLine2(BCf,BC2f,'')
+	#plotLine2(BC2f,BCf,'')
+	#print dtw (np.array(BC2f),np.array(BCf))
 	#and the slow
 ###################
 	mCFlist=[]
 	lpfCFlist=[]
 	hpfCFlist=[]
 	hlpfCFlist=[]
+	standList = []
 	for Mdata in CFlist:
 		mCFlist.append(meanF(Mdata,win))
 	for mCF0 in mCFlist:
@@ -220,8 +235,11 @@ def main():
 	for mCF0 in mCFlist:
 		hpfCFlist.append(HPF(mCF0))
 	for mhCF0 in hpfCFlist:
-		hlpfCFlist.append(LPF(mhCF0))	
-	#plotNlines(lpfCFlist,hlpfCFlist)
+		hlpfCFlist.append(LPF(mhCF0))
+	#standList = standard(mCFlist)	
+	for dataLPF in lpfCFlist:
+		standList.append(standard(dataLPF))
+	#plotNlines(lpfCFlist,hlpfCFlist,standList)
 
 ###################
 #plot 3 line for 3 devices 
@@ -231,14 +249,27 @@ def main():
 	BCLMI=LPF(mBCMI)
 	mBCHW=meanF(BCxyzHW,win)
 	BCLHW=LPF(mBCHW)
-	print dtw(mBC,mBCHW)
-	print dtw(mBCMI,mBC)
-	print dtw(mBCMI,mBCHW)
+	#print dtw(mBC,mBCHW)
+	#print dtw(mBCMI,mBC)
+	#print dtw(mBCMI,mBCHW)
 	#plotLine3(BCL,BCLMI,BCLHW)#plot the 3 DEVICES
 #####################
 	#plotFilterLines(BCxyz,mBC,BCL)
 #####################
+	mCF2=meanF(CF2xyz,win)
+	CF2f=LPF(mCF2)
+	mCF02=meanF(CF02xyz,win)
+	CF02f=LPF(mCF02)
+	mCF04=meanF(CF04xyz,win)
+	CF04f=LPF(mCF04)
 
+	print dtw (np.array(CF02f),np.array(CF2f))
+	print dtw (np.array(CF02f),np.array(CF04f))
+	print dtw (np.array(CF02f),np.array(HGf))
+
+	#plotLine4lines(CF02f,CF2f,CF04f,HGf)
+	#plotLine3(CF02f,CF2f,CF04f)
 
 if __name__ == '__main__':
+
 	main()
