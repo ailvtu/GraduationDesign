@@ -104,10 +104,10 @@ def plotLine4(x,y,z,p):
 #plot 3 line
 def plotLine4lines(x,y,z,d):
 	plt.figure(1)
-	plt.plot(x[1:len(x)],'r-',label="$CF1$",linewidth=2)
-	plt.plot(y[1:len(y)],'g-',label="$CF2$",linewidth=2)
-	plt.plot(z[1:len(z)],'b-',label="$CF3$",linewidth=2)
-	plt.plot(d[1:len(d)],'m-',label="$HG$",linewidth=2)
+	plt.plot(x[1:len(x)],'r-',label="$BH$",linewidth=2)
+	plt.plot(y[1:len(y)],'g-',label="$BC$",linewidth=2)
+	plt.plot(z[1:len(z)],'b-',label="$HG$",linewidth=2)
+	plt.plot(d[1:len(d)],'m-',label="$CF$",linewidth=2)
 	plt.xlabel('simples')
 	plt.ylabel('intensity/uT')
 	#plt.ylim(0, 15)
@@ -118,10 +118,13 @@ def plotLine4lines(x,y,z,d):
 
 def plotNlines(dataList1,dataList2,dataList3):
 
-	plt.subplot(311)
+	plt.subplot()
 	for data in dataList1:
 		plt.plot(data,linewidth=1.5)
 	plt.ylabel('intensity/uT')
+	#plt.xlabel('simples')
+	plt.show()
+
 	plt.subplot(312)
 	for data2 in dataList2:
 		plt.plot(data2,linewidth=1.5)
@@ -131,7 +134,7 @@ def plotNlines(dataList1,dataList2,dataList3):
 		plt.plot(data3,linewidth=1.5)
 		plt.ylabel('difference')
 	plt.xlabel('simples')
-	plt.show()
+
 
 def plotFilterLines(x,y,z):
 	plt.subplot(311)
@@ -166,15 +169,15 @@ def main():
     
 
 	CFlist=[]
-	#CF01x,CF01y,CF01z,CF01xyz=readFile(magneticDataPath26,'CF01.txt');CFlist.append(CF01xyz);
-	#CF02x,CF02y,CF02z,CF02xyz=readFile(magneticDataPath26,'CF02.txt');CFlist.append(CF02xyz);
-	#CF03x,CF03y,CF03z,CF03xyz=readFile(magneticDataPath26,'CF03.txt');CFlist.append(CF03xyz);
-	#CF04x,CF04y,CF04z,CF04xyz=readFile(magneticDataPath26,'CF04.txt');CFlist.append(CF04xyz);
-	#CF05x,CF05y,CF05z,CF05xyz=readFile(magneticDataPath26,'CF05.txt');CFlist.append(CF05xyz);
-	#CF06x,CF06y,CF06z,CF06xyz=readFile(magneticDataPath26,'CF06.txt');CFlist.append(CF06xyz);
+	CF01x,CF01y,CF01z,CF01xyz=readFile(magneticDataPath26,'CF01.txt');CFlist.append(CF01xyz);
+	CF02x,CF02y,CF02z,CF02xyz=readFile(magneticDataPath26,'CF02.txt');CFlist.append(CF02xyz);
+	CF03x,CF03y,CF03z,CF03xyz=readFile(magneticDataPath26,'CF03.txt');CFlist.append(CF03xyz);
+	CF04x,CF04y,CF04z,CF04xyz=readFile(magneticDataPath26,'CF04.txt');CFlist.append(CF04xyz);
+	CF05x,CF05y,CF05z,CF05xyz=readFile(magneticDataPath26,'CF05.txt');CFlist.append(CF05xyz);
+	CF06x,CF06y,CF06z,CF06xyz=readFile(magneticDataPath26,'CF06.txt');CFlist.append(CF06xyz);
 	CF07x,CF07y,CF07z,CF07xyz=readFile(magneticDataPath26,'CF07.txt');CFlist.append(CF07xyz);
-	#CF08x,CF08y,CF08z,CF08xyz=readFile(magneticDataPath26,'CF08.txt');CFlist.append(CF08xyz);
-	#CF09x,CF09y,CF09z,CF09xyz=readFile(magneticDataPath26,'CF09.txt');CFlist.append(CF09xyz);
+	CF08x,CF08y,CF08z,CF08xyz=readFile(magneticDataPath26,'CF08.txt');CFlist.append(CF08xyz);
+	CF09x,CF09y,CF09z,CF09xyz=readFile(magneticDataPath26,'CF09.txt');CFlist.append(CF09xyz);
 	CF10x,CF10y,CF10z,CF10xyz=readFile(magneticDataPath26,'CF10.txt');CFlist.append(CF10xyz);
 
 
@@ -214,7 +217,7 @@ def main():
 	mGH=meanF(GHxyz,win)
 	GHf=LPF(mGH)
 	GHf.reverse()
-	plotLine2(GHf,HGf,'direction')#plot the TWO direction
+	#plotLine2(GHf,HGf,'direction')#plot the TWO direction
     #plotLine2(GHf,HGf,'HPF')#plot the HPFd raw data
 ###################
 	mBC2=meanF(BC2xyz,win)
@@ -267,7 +270,7 @@ def main():
 	print dtw (np.array(CF02f),np.array(CF04f))
 	print dtw (np.array(CF02f),np.array(HGf))
 
-	#plotLine4lines(CF02f,CF2f,CF04f,HGf)
+	plotLine4lines(BHf2,BCf,HGf,CFf)
 	#plotLine3(CF02f,CF2f,CF04f)
 
 if __name__ == '__main__':
