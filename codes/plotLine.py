@@ -13,7 +13,10 @@ magneticDataPathXiaoMi = '/home/dash/Pictures/sensorData/Xiaomi/magneticData'
 magneticDataPathHuawei = '/home/dash/Pictures/sensorData/Huawei/magneticData'
 #magneticDataPath = '/home/dash/Pictures/sensorData/2016_11_22/magneticData2'
 acceleroDataPath = '/home/dash/Pictures/sensorData/2016_11_25/acceleroData'
+
+longTinePtah =  '/home/dash/Pictures/sensorData/3mouth'
 #print os.listdir(magneticDataPath)
+
 win=5
 
 #plot 1 lines
@@ -56,15 +59,15 @@ def plotLine2(a,b,label):
 def plotLine3(x,y,z):
 	plt.figure(1)
 
-	plt.plot(x,'r-',label="$left$",linewidth=2)
-	plt.plot(y,'g-',label="$midle$",linewidth=2)
-	plt.plot(z,'b-',label="$right$",linewidth=2)
+	plt.plot(x,'r-',label="$X$",linewidth=2)
+	plt.plot(y,'g-',label="$Y$",linewidth=2)
+	plt.plot(z,'b-',label="$Z$",linewidth=2)
 
 	#plt.plot(x,'k-',label="$Meizu$",linewidth=1.5)
 	#plt.plot(y,'m-',label="$Xiaomi$",linewidth=1.5)
 	#plt.plot(z,'b-',label="$Huawei$",linewidth=1.5)
 	plt.xlabel('simples')
-	plt.ylabel('intensity/uT')
+	plt.ylabel('m/s^2')
 	#plt.ylim(34,44)
 	#plt.xlim(0, 65)		
 	#plt.title('gallery magnetic field')
@@ -136,17 +139,24 @@ def plotNlines(dataList1,dataList2,dataList3):
 	plt.xlabel('simples')
 
 
-def plotFilterLines(x,y,z):
-	plt.subplot(311)
-	plt.plot(x,linewidth=1.6)
+def plotFilterLines(x1,x2,x3,y1,y2,y3):
+	plt.subplot(121)
+	plt.plot(x1[:110],label="$Oct$",linewidth=1.8)
+	plt.plot(x2[:110],'r-',label="$Nov$",linewidth=1.8)
+	plt.plot(x3[:110],label="$Dec$",linewidth=1.8)
+
 	plt.ylabel('intensity/uT')
-	plt.subplot(312)
-	plt.plot(y,'m-',linewidth=1.6)
-	plt.ylabel('intensity/uT')
-	plt.subplot(313)
-	plt.plot(z,'r-',linewidth=1.6)
 	plt.xlabel('simples')
+	plt.legend(loc=4)
+	plt.subplot(122)
+	plt.plot(y1,'m-',label="$MeiZu$",linewidth=1.8)
+	plt.plot(y2,label="$XiaoMi$",linewidth=1.8)
+	plt.plot(y3,label="$HuaWei$",linewidth=1.8)
+
 	plt.ylabel('intensity/uT')
+	plt.ylim(33,44)	
+	plt.xlabel('simples')
+	plt.legend(loc=4)
 	plt.show()
 def main():
 
@@ -187,6 +197,25 @@ def main():
 	BCxHW,BCyHW,BCzHW,BCxyzHW=readFile(magneticDataPathHuawei,'BC.txt')
 	#JZx,JZy,JZz,JZxyz=readFile('jiaozheng.txt')#path 1123
 
+	ACFx,ACFy,ACFz,ACFxyz=readFile(acceleroDataPath,'CF.txt')
+	#plotFilterLines(ACFx,ACFz)
+
+	ADx,ADy,ADz,ADxyz=readFile(longTinePtah,'AD.txt')
+	AD1x,AD1y,AD1z,AD1xyz=readFile(longTinePtah,'AD2.txt')
+	AD2x,AD2y,AD2z,AD2xyz=readFile(longTinePtah,'AD3.txt')
+	AD3x,AD3y,AD3z,AD3xyz=readFile(longTinePtah,'AD4.txt')
+
+	mAD=meanF(ADxyz,win)
+	mAD1=meanF(AD1xyz,win)
+	mAD2=meanF(AD2xyz,win)
+	mAD3=meanF(AD3xyz,win)
+
+	ADLF=LPF(mAD) 
+	ADLF1=LPF(mAD1)
+	ADLF2=LPF(mAD2)
+	ADLF3=LPF(mAD3)
+
+
 #############
 	mGH=meanF(GHxyz,win)
 	GHmhf1=LPF(mGH)
@@ -219,6 +248,8 @@ def main():
 	GHf.reverse()
 	#plotLine2(GHf,HGf,'direction')#plot the TWO direction
     #plotLine2(GHf,HGf,'HPF')#plot the HPFd raw data
+
+	#plotFilterLines(BHf1,BHf2,BHf3,GHf,HGf)
 ###################
 	mBC2=meanF(BC2xyz,win)
 	BC2f=LPF(mBC2)
@@ -256,6 +287,7 @@ def main():
 	#print dtw(mBCMI,mBC)
 	#print dtw(mBCMI,mBCHW)
 	#plotLine3(BCL,BCLMI,BCLHW)#plot the 3 DEVICES
+	#plotFilterLines(ADLF,ADLF1,ADLF2,BCL,BCLMI,BCLHW)
 #####################
 	#plotFilterLines(BCxyz,mBC,BCL)
 #####################
@@ -266,13 +298,17 @@ def main():
 	mCF04=meanF(CF04xyz,win)
 	CF04f=LPF(mCF04)
 
-	print dtw (np.array(CF02f),np.array(CF2f))
-	print dtw (np.array(CF02f),np.array(CF04f))
-	print dtw (np.array(CF02f),np.array(HGf))
+	mCF01=meanF(CF01xyz,win)
+	CF01f=LPF(mCF01)
+	mCF03=meanF(CF03xyz,win)
+	CF03f=LPF(mCF03)
 
-	plotLine4lines(BHf2,BCf,HGf,CFf)
+	#print dtw (np.array(CF02f),np.array(CF2f))
+	#print dtw (np.array(CF02f),np.array(CF04f))
+	#print dtw (np.array(CF02f),np.array(HGf))
+#	plotLine4lines(BHf2,BCf,HGf,CFf)
 	#plotLine3(CF02f,CF2f,CF04f)
-
+	plotFilterLines(CF01f,CF04f,CF03f,BCL,BCLMI,BCLHW)
 if __name__ == '__main__':
 
 	main()

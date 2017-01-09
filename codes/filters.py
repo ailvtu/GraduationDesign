@@ -7,7 +7,7 @@ def LPF(dataArray):
 		d = 0.4*float(dataArray[x])+0.6*float(aft[x-1])
 		aft.append(d)
 	return aft
-
+#high-pass filtering
 def HPF(dataArray):
 	hpf = []
 	hpf.append(0)
@@ -15,6 +15,7 @@ def HPF(dataArray):
 		h = 0.98*(float(hpf[x-1]))+0.4*(float(dataArray[x])-float(dataArray[x-1]))
 		hpf.append(h)
 	return hpf
+#mean filtering
 def meanF(dataArray,window):
 	temdata = 0 
 	x = 0
@@ -28,7 +29,7 @@ def meanF(dataArray,window):
 			temdata=0
 			x=0
 	return dataArray2
-
+#standardization
 def standard(dataArray):
 	newList = []
 	narray=numpy.array(dataArray)
